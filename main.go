@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
@@ -16,27 +18,39 @@ type model struct {
 	homeForm       *huh.Form
 	conversionForm *huh.Form
 	resizeForm     *huh.Form
-	currentPage    *huh.Form
+	currentPage    tea.Model
 	width          int
 	height         int
-	style          *Styles
+	style          *styles
 }
 
-type Styles struct {
+type styles struct {
 	BorderColor lipgloss.AdaptiveColor
-	Home        lipgloss.Style
+	Framed      lipgloss.Style
+	Success     lipgloss.Style
+	Info        lipgloss.Style
 }
 
-func DefaultStyle() *Styles {
-	s := new(Styles)
+func DefaultStyle() *styles {
+	s := new(styles)
 
 	s.BorderColor = lipgloss.AdaptiveColor{Light: "#FFFDF5", Dark: "#FFFDF5"}
-	s.Home = lipgloss.
+
+	s.Framed = lipgloss.
 		NewStyle().
 		BorderForeground(s.BorderColor).
 		BorderStyle(lipgloss.NormalBorder()).
 		Padding(1).
-		Width(80)
+		Width(55)
+
+	s.Success = lipgloss.
+		NewStyle().
+		Foreground(lipgloss.AdaptiveColor{Light: "#02BA84", Dark: "#02BF87"}).
+		Bold(true)
+
+	s.Info = lipgloss.
+		NewStyle().
+		Foreground(lipgloss.Color("#3C3C3C")).Align(lipgloss.Center)
 
 	return s
 }
@@ -117,6 +131,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			fileops.Resize(fileName, resizeMode, newSize)
 		}
+
+		m.currentPage = nil
 	}
 
 	return m, tea.Batch(cmds...)
@@ -127,7 +143,18 @@ func (m model) View() string {
 		return "loading..."
 	}
 
-	styledForm := m.style.Home.Render(m.currentPage.View())
+	var styledForm string
+	if m.currentPage != nil {
+		styledForm = m.style.Framed.Render(m.currentPage.View())
+	} else {
+		success := m.style.Success.Render("successfully")
+		exit := m.style.Info.Render("You can exit the program using 'esc' or 'ctrl+c'")
+		var builder strings.Builder
+		fmt.Fprintf(&builder, "Operation completed %s\n", success)
+		fmt.Fprintf(&builder, exit)
+		styledForm = m.style.Framed.Render(builder.String())
+	}
+
 	centeredForm := lipgloss.Place(
 		m.width,
 		m.height,
