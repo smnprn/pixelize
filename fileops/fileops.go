@@ -1,34 +1,37 @@
 package fileops
 
 import (
+	"errors"
+	"fmt"
 	"image"
-	"log"
 	"strings"
 
 	"github.com/sunshineplan/imgconv"
 )
 
-func Convert(oldFileName string, newFileName string, format imgconv.Format) {
+func Convert(oldFileName string, newFileName string, format imgconv.Format) error {
 	src, err := imgconv.Open(oldFileName)
 	if err != nil {
-		log.Fatalf("failed to open image: %v", err)
+		return errors.New(fmt.Sprint("failed to open ", oldFileName))
 	}
 
 	err = imgconv.Save(newFileName, src, &imgconv.FormatOption{Format: format})
 	if err != nil {
-		log.Fatalf("failed to write image: %v", err)
+		return errors.New(fmt.Sprint("failed to save ", newFileName))
 	}
+
+	return nil
 }
 
-func Resize(fileName string, resizeMode int, value float64) {
+func Resize(fileName string, resizeMode int, value float64) error {
 	src, err := imgconv.Open(fileName)
 	if err != nil {
-		log.Fatalf("failed to open image: %v", err)
+		return errors.New(fmt.Sprint("failed to open ", fileName))
 	}
 
 	imgFormat, err := imgconv.FormatFromExtension(getFormat(fileName))
 	if err != nil {
-		log.Fatalf("failed to get image format: %v", err)
+		return fmt.Errorf("could not find image format")
 	}
 
 	var resizedImg image.Image
@@ -41,8 +44,10 @@ func Resize(fileName string, resizeMode int, value float64) {
 
 	err = imgconv.Save(fileName, resizedImg, &imgconv.FormatOption{Format: imgFormat})
 	if err != nil {
-		log.Fatalf("failed to save image: %v", err)
+		return fmt.Errorf("failed to save image: %v", err)
 	}
+
+	return nil
 }
 
 func getFormat(fileName string) string {

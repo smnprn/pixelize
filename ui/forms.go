@@ -28,6 +28,7 @@ func ConversionPage() *huh.Form {
 		huh.NewGroup(
 			huh.NewInput().
 				Title("Image name or path").
+				Description("Including file extenson (e.g. '.png' or '.jpeg')").
 				Key("oldFileName"),
 
 			huh.NewInput().

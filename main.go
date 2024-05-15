@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -22,12 +23,14 @@ type model struct {
 	width          int
 	height         int
 	style          *styles
+	errStatus      error
 }
 
 type styles struct {
 	BorderColor lipgloss.AdaptiveColor
 	Framed      lipgloss.Style
 	Success     lipgloss.Style
+	Failure     lipgloss.Style
 	Info        lipgloss.Style
 }
 
@@ -46,6 +49,11 @@ func DefaultStyle() *styles {
 	s.Success = lipgloss.
 		NewStyle().
 		Foreground(lipgloss.AdaptiveColor{Light: "#02BA84", Dark: "#02BF87"}).
+		Bold(true)
+
+	s.Failure = lipgloss.
+		NewStyle().
+		Foreground(lipgloss.AdaptiveColor{Light: "#FF4672", Dark: "#ED567A"}).
 		Bold(true)
 
 	s.Info = lipgloss.
@@ -112,8 +120,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		confirm := m.conversionForm.GetBool("confirm")
 
 		if confirm {
-			fileops.Convert(oldFileName, newFileName, format.(imgconv.Format))
+			m.errStatus = fileops.Convert(oldFileName, newFileName, format.(imgconv.Format))
+			if m.errStatus != nil {
+				m.currentPage = nil
+			}
 		}
+
+		m.currentPage = nil
 	}
 
 	if m.resizeForm.State == huh.StateCompleted {
@@ -125,11 +138,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if confirm {
 			newSize, err := strconv.ParseFloat(newSizeStr, 64)
 			if err != nil {
-				log.Fatal(err)
-				return m, tea.Quit
+				m.errStatus = errors.New("could not parse new size")
 			}
 
-			fileops.Resize(fileName, resizeMode, newSize)
+			m.errStatus = fileops.Resize(fileName, resizeMode, newSize)
+			if m.errStatus != nil {
+				m.currentPage = nil
+			}
 		}
 
 		m.currentPage = nil
@@ -147,10 +162,16 @@ func (m model) View() string {
 	if m.currentPage != nil {
 		styledForm = m.style.Framed.Render(m.currentPage.View())
 	} else {
-		success := m.style.Success.Render("successfully")
+		var success string
+		if m.errStatus != nil {
+			success = m.style.Failure.Render("failure (" + m.errStatus.Error() + ")")
+		} else {
+			success = m.style.Success.Render("success")
+		}
+
 		exit := m.style.Info.Render("You can exit the program using 'esc' or 'ctrl+c'")
 		var builder strings.Builder
-		fmt.Fprintf(&builder, "Operation completed %s\n", success)
+		fmt.Fprintf(&builder, "Operation status: %s\n", success)
 		fmt.Fprintf(&builder, exit)
 		styledForm = m.style.Framed.Render(builder.String())
 	}
