@@ -26,7 +26,7 @@ func Convert(oldFileName string, newFileName string, format imgconv.Format) erro
 func Resize(fileName string, resizeMode int, value float64) error {
 	src, err := imgconv.Open(fileName)
 	if err != nil {
-		return errors.New(fmt.Sprint("failed to open ", fileName))
+		return errors.New(fmt.Sprint("failed to open " + fileName))
 	}
 
 	imgFormat, err := imgconv.FormatFromExtension(getFormat(fileName))
@@ -44,7 +44,7 @@ func Resize(fileName string, resizeMode int, value float64) error {
 
 	err = imgconv.Save(fileName, resizedImg, &imgconv.FormatOption{Format: imgFormat})
 	if err != nil {
-		return fmt.Errorf("failed to save image: %v", err)
+		return fmt.Errorf("failed to save image, invalid size")
 	}
 
 	return nil
