@@ -3,7 +3,7 @@ package ui
 import "github.com/charmbracelet/lipgloss"
 
 type Styles struct {
-	BorderColor lipgloss.AdaptiveColor
+	BorderColor lipgloss.Color
 	Framed      lipgloss.Style
 	Success     lipgloss.Style
 	Failure     lipgloss.Style
@@ -13,7 +13,7 @@ type Styles struct {
 func DefaultStyle() *Styles {
 	s := new(Styles)
 
-	s.BorderColor = lipgloss.AdaptiveColor{Light: "#FFFDF5", Dark: "#FFFDF5"}
+	s.BorderColor = lipgloss.Color("#3C3C3C")
 
 	s.Framed = lipgloss.
 		NewStyle().
@@ -34,7 +34,8 @@ func DefaultStyle() *Styles {
 
 	s.Info = lipgloss.
 		NewStyle().
-		Foreground(lipgloss.Color("#3C3C3C")).Align(lipgloss.Center)
+		Foreground(lipgloss.Color("#3C3C3C")).
+		Align(lipgloss.Center)
 
 	return s
 }

@@ -18,6 +18,8 @@ func Convert(oldFileName string, newFileName string, format imgconv.Format) erro
 		return errors.New(fmt.Sprint("failed to open ", oldFileName))
 	}
 
+	newFileName = correctFileName(newFileName, format)
+
 	err = imgconv.Save(newFileName, src, &imgconv.FormatOption{Format: format})
 	if err != nil {
 		return errors.New(fmt.Sprint("failed to save ", newFileName))
@@ -87,4 +89,10 @@ func restoreBackup(fileName string, format *imgconv.FormatOption) error {
 func getFormat(fileName string) string {
 	format := strings.Split(fileName, ".")[1]
 	return format
+}
+
+func correctFileName(fileName string, format imgconv.Format) string {
+	prefix := strings.Split(fileName, ".")
+	correctFileName := prefix[0] + "." + format.String()
+	return correctFileName
 }
