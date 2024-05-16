@@ -25,10 +25,12 @@ require (
 )
 
 require (
+	github.com/adrium/goheif v0.0.0-20230113233934-ca402e77a786
 	github.com/charmbracelet/huh v0.3.0
 	github.com/disintegration/imaging v1.6.2 // indirect
 	github.com/hhrutter/lzw v1.0.0 // indirect
 	github.com/hhrutter/tiff v1.0.1 // indirect
+	github.com/jdeng/goheif v0.0.0-20200323230657-a0d6a8b3e68f
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/pdfcpu/pdfcpu v0.5.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

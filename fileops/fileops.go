@@ -13,6 +13,14 @@ import (
 var backupFile = "/tmp/backup"
 
 func Convert(oldFileName string, newFileName string, format imgconv.Format) error {
+	imgFormat := getFormat(oldFileName)
+
+	if imgFormat == "HEIC" {
+		ConvertHeicToJpg(oldFileName, "/tmp/heic")
+		oldFileName = "/tmp/heic"
+		defer os.Remove("/tmp/heic")
+	}
+
 	src, err := imgconv.Open(oldFileName)
 	if err != nil {
 		return errors.New(fmt.Sprint("failed to open ", oldFileName))
