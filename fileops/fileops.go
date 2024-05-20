@@ -13,7 +13,10 @@ import (
 var backupFile = "/tmp/backup"
 
 func Convert(oldFileName string, newFileName string, format imgconv.Format) error {
-	imgFormat := getFormat(oldFileName)
+	imgFormat, err := getFormat(oldFileName)
+	if err != nil {
+		return err
+	}
 
 	if imgFormat == "HEIC" {
 		ConvertHeicToJpg(oldFileName, "/tmp/heic")
@@ -42,12 +45,17 @@ func Resize(fileName string, resizeMode int, value float64) error {
 		return errors.New(fmt.Sprint("failed to open " + fileName))
 	}
 
-	imgFormat, err := imgconv.FormatFromExtension(getFormat(fileName))
+	imgFormat, err := getFormat(fileName)
+	if err != nil {
+		return err
+	}
+
+	imgFormatType, err := imgconv.FormatFromExtension(imgFormat)
 	if err != nil {
 		return fmt.Errorf("could not find image format")
 	}
 
-	err = backupImg(src, &imgconv.FormatOption{Format: imgFormat})
+	err = backupImg(src, &imgconv.FormatOption{Format: imgFormatType})
 	if err != nil {
 		return errors.New("could not backup file")
 	}
@@ -60,9 +68,9 @@ func Resize(fileName string, resizeMode int, value float64) error {
 		resizedImg = imgconv.Resize(src, &imgconv.ResizeOption{Percent: value})
 	}
 
-	err = imgconv.Save(fileName, resizedImg, &imgconv.FormatOption{Format: imgFormat})
+	err = imgconv.Save(fileName, resizedImg, &imgconv.FormatOption{Format: imgFormatType})
 	if err != nil {
-		restoreBackup(fileName, &imgconv.FormatOption{Format: imgFormat})
+		restoreBackup(fileName, &imgconv.FormatOption{Format: imgFormatType})
 		return fmt.Errorf("failed to save image, invalid size")
 	}
 
@@ -94,9 +102,14 @@ func restoreBackup(fileName string, format *imgconv.FormatOption) error {
 	return nil
 }
 
-func getFormat(fileName string) string {
-	format := strings.Split(fileName, ".")[1]
-	return format
+func getFormat(fileName string) (string, error) {
+	var format string
+	if !strings.Contains(fileName, ".") {
+		return "", errors.New("file name does not contain file format")
+	}
+
+	format = strings.Split(fileName, ".")[1]
+	return format, nil
 }
 
 func correctFileName(fileName string, format imgconv.Format) string {

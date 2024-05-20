@@ -2,9 +2,7 @@ package ui
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
-	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
@@ -115,26 +113,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	if m.width == 0 {
-		return "loading..."
-	}
-
 	var styledForm string
 	if m.currentPage != nil {
 		styledForm = m.style.Framed.Render(m.currentPage.View())
 	} else {
-		var success string
-		if m.errStatus != nil {
-			success = m.style.Failure.Render("failure")
-		} else {
-			success = m.style.Success.Render("success")
-		}
-
-		exit := m.style.Info.Render("You can exit the program using 'esc' or 'ctrl+c'")
-		var builder strings.Builder
-		fmt.Fprintf(&builder, "Operation status: %s\n", success)
-		fmt.Fprintf(&builder, exit)
-		styledForm = m.style.Framed.Render(builder.String())
+		styledForm = m.style.Framed.Render(CreateResultScreen(m))
 	}
 
 	centeredForm := lipgloss.Place(
