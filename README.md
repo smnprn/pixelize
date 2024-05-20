@@ -34,6 +34,17 @@ HEIC is supported only as a source file format.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- How to install -->
+## Installation
+
+1. Download the latest release from the [GitHub Releases page](https://github.com/smnprn/pixelize/releases).
+2. Extract the tarball (`tar -xzvf pixelize-linux-amd64.tar.gz`)
+3. Move the binary to a directory in your PATH (`sudo mv pixelize /usr/local/bin/`)
+4. Make the binary executable (`sudo chmod +x /usr/local/bin/pixelize`)
+5. Start the program (`pixelize`)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- Contributing -->
 ## Contributing
 If you wish to contribute to the project <b>feel free to fork the repo and create a pull request</b>!\
