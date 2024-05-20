@@ -1,4 +1,3 @@
-<br />
 <div align="center">
     <h2 align="center"><b>Pixelize</b></h2>
     <p align="center">
