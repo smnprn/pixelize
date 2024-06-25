@@ -1,24 +1,19 @@
 package ui
 
 import (
-	"errors"
-	"strconv"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/smnprn/pixelize/fileops"
-	"github.com/sunshineplan/imgconv"
 )
 
 /*
-* Page indexes:
-* 0 - Home
-* 1 - Conversion
-* 2 - Resize
+ * Page indexes:
+ * 0 - Home
+ * 1 - Conversion
+ * 2 - Resize
  */
 
-type model struct {
+type Model struct {
 	pages            []tea.Model
 	currentPageIndex int
 	completed        bool
@@ -28,9 +23,9 @@ type model struct {
 	errStatus        error
 }
 
-func NewModel() model {
+func NewModel() Model {
 	style := DefaultStyle()
-	m := model{
+	m := Model{
 		pages: []tea.Model{
 			HomePage(),
 			ConversionPage(),
@@ -43,11 +38,11 @@ func NewModel() model {
 	return m
 }
 
-func (m model) Init() tea.Cmd {
+func (m Model) Init() tea.Cmd {
 	return m.pages[m.currentPageIndex].Init()
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -56,6 +51,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "esc", "ctrl+c":
 			return m, tea.Quit
+		case "ctrl+p":
+			m.ChangePageOperation(-1)
 		}
 	}
 
@@ -73,7 +70,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func (m model) View() string {
+func (m Model) View() string {
 	var styledForm string
 	if m.completed {
 		styledForm = m.style.Framed.Render(CreateResultScreen(m))
@@ -92,56 +89,15 @@ func (m model) View() string {
 	return centeredForm
 }
 
-func (m *model) ChangePageOperation(pageIndex int) error {
+func (m *Model) ChangePageOperation(pageIndex int) {
 	switch pageIndex {
 	case 0:
-		homeForm := m.pages[m.currentPageIndex].(*huh.Form)
-		operation := homeForm.GetInt("operation")
-
-		switch operation {
-		case 0:
-			m.currentPageIndex = 1
-		case 1:
-			m.currentPageIndex = 2
-		}
+		terminateHomePage(m)
 	case 1:
-		conversionForm := m.pages[m.currentPageIndex].(*huh.Form)
-
-		oldFileName := conversionForm.GetString("oldFileName")
-		newFileName := conversionForm.GetString("newFileName")
-		format := conversionForm.Get("format")
-		confirm := conversionForm.GetBool("confirm")
-
-		if confirm {
-			m.errStatus = fileops.Convert(oldFileName, newFileName, format.(imgconv.Format))
-			if m.errStatus != nil {
-				m.completed = true
-			}
-		}
-
-		m.completed = true
+		terminateConversionPage(m)
 	case 2:
-		resizeForm := m.pages[m.currentPageIndex].(*huh.Form)
-
-		fileName := resizeForm.GetString("fileName")
-		resizeMode := resizeForm.GetInt("resizeMode")
-		newSizeStr := resizeForm.GetString("newSizeStr")
-		confirm := resizeForm.GetBool("confirm")
-
-		if confirm {
-			newSize, err := strconv.ParseFloat(newSizeStr, 64)
-			if err != nil {
-				m.errStatus = errors.New("could not parse new size")
-			}
-
-			m.errStatus = fileops.Resize(fileName, resizeMode, newSize)
-			if m.errStatus != nil {
-				m.completed = true
-			}
-		}
-
-		m.completed = true
+		terminateResizePage(m)
+	case -1:
+		resetPages(m)
 	}
-
-	return nil
 }

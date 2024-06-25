@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func CreateResultScreen(m model) string {
+func CreateResultScreen(m Model) string {
 	var builder strings.Builder
 
 	var success string
@@ -15,7 +15,7 @@ func CreateResultScreen(m model) string {
 		success = m.style.Success.Render("success")
 	}
 
-	exit := m.style.Info.Render("You can exit the program using 'esc' or 'ctrl+c'")
+	exit := m.style.Info.Render("Use 'ctrl+c' to exit or 'ctrl+p' to start again")
 	fmt.Fprintf(&builder, "Operation status: %s\n", success)
 	if m.errStatus != nil {
 		fmt.Fprintf(&builder, "%s\n", m.errStatus)
