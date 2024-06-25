@@ -31,9 +31,10 @@ func terminateConversionPage(m *Model) {
 
 	if confirm {
 		m.errStatus = fileops.Convert(oldFileName, newFileName, format.(imgconv.Format))
+		m.completed = true
+	} else {
+		resetPages(m)
 	}
-
-	m.completed = true
 }
 
 func terminateResizePage(m *Model) {
@@ -51,9 +52,10 @@ func terminateResizePage(m *Model) {
 		}
 
 		m.errStatus = fileops.Resize(fileName, resizeMode, newSize)
+		m.completed = true
+	} else {
+		resetPages(m)
 	}
-
-	m.completed = true
 }
 
 func resetPages(m *Model) {
