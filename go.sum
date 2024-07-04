@@ -18,6 +18,8 @@ github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81 h1:q2hJAaP1k2
 github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81/go.mod h1:YynlIjWYF8myEu6sdkwKIvGQq+cOckRm6So2avqoYAk=
 github.com/disintegration/imaging v1.6.2 h1:w1LecBlG2Lnp8B3jk5zSuNqd7b4DXhcjwek1ei82L+c=
 github.com/disintegration/imaging v1.6.2/go.mod h1:44/5580QXChDfwIclfc/PCwrr44amcmDAg8hxG0Ewe4=
+github.com/endlesstravel/goheif v0.0.0-20230320163026-677136ae6369 h1:l1RgXKyiGSq5dmLhLGj+fDkFgTXrZuPaLoRiMmCO7P8=
+github.com/endlesstravel/goheif v0.0.0-20230320163026-677136ae6369/go.mod h1:pUgK60PdQzJP95jj5nN3aAce2HrjFdeqHoN0Yy/InpQ=
 github.com/hhrutter/lzw v1.0.0 h1:laL89Llp86W3rRs83LvKbwYRx6INE8gDn0XNb1oXtm0=
 github.com/hhrutter/lzw v1.0.0/go.mod h1:2HC6DJSn/n6iAZfgM3Pg+cP1KxeWc3ezG8bBqW5+WEo=
 github.com/hhrutter/tiff v1.0.1 h1:MIus8caHU5U6823gx7C6jrfoEvfSTGtEFRiM8/LOzC0=

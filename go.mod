@@ -28,6 +28,7 @@ require (
 	github.com/adrium/goheif v0.0.0-20230113233934-ca402e77a786
 	github.com/charmbracelet/huh v0.3.0
 	github.com/disintegration/imaging v1.6.2 // indirect
+	github.com/endlesstravel/goheif v0.0.0-20230320163026-677136ae6369
 	github.com/hhrutter/lzw v1.0.0 // indirect
 	github.com/hhrutter/tiff v1.0.1 // indirect
 	github.com/jdeng/goheif v0.0.0-20200323230657-a0d6a8b3e68f

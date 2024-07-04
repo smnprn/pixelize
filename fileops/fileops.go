@@ -59,6 +59,7 @@ func Resize(fileName string, resizeMode int, value float64) error {
 	if err != nil {
 		return errors.New("could not backup file")
 	}
+	defer os.Remove(backupFile)
 
 	var resizedImg image.Image
 	switch resizeMode {

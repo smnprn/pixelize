@@ -32,7 +32,8 @@ func ConversionPage() *huh.Form {
 				Key("oldFileName"),
 
 			huh.NewInput().
-				Title("New image name").
+				Title("New image name or path").
+				Description("Saved to current or specified path").
 				Key("newFileName"),
 
 			huh.NewSelect[imgconv.Format]().
